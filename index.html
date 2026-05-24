@@ -1,0 +1,857 @@
+<!DOCTYPE html> //This is change 1
+<html lang="en">
+<head>
+    <link rel="icon" type="image/jpg" href="favicon.jpg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iceland 2026 | Family Trip Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+                body {
+                    font-family: 'Inter', sans-serif;
+                    background-color: #f8fafc;
+                    color: #1e293b;
+                    margin: 0;
+                    overflow-x: hidden;
+                }
+                .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+                .glass {
+                    background: rgba(255, 255, 255, 0.6);
+                    backdrop-filter: blur(12px);
+                    -webkit-backdrop-filter: blur(12px);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                }
+
+                /* Compact horizontal pill dock */
+                .weather-stack-dock {
+                    position: relative;
+                    z-index: 1;
+                    width: 92%;
+                    max-width: 580px;
+                    padding: 0.35rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    background: rgba(255, 255, 255, 0.9);
+                    border: 1px solid rgba(203, 213, 225, 0.6);
+                    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+                    margin: 0 auto 1.5rem;
+                    border-radius: 9999px;
+                }
+
+                /* Modern minimal badges with premium interactions */
+                .weather-badge-card {
+                    background-color: #ffffff;
+                    border-radius: 9999px;
+                    color: #0f172a;
+                    padding: 0.35rem 0.6rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    border: 1px solid rgba(226, 232, 240, 0.8);
+                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                @media (min-width: 640px) {
+                    .weather-badge-card {
+                        padding: 0.45rem 0.8rem;
+                        gap: 0.6rem;
+                    }
+                }
+                .weather-badge-card:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 8px rgba(15, 23, 42, 0.06);
+                    border-color: rgba(99, 102, 241, 0.3);
+                }
+
+                .glow-active {
+                    position: relative;
+                    background: rgba(255, 255, 255, 0.8) !important;
+                    box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+                }
+
+                body {
+                    padding-top: 0;
+                }
+                .glow-active::after {
+                    content: '';
+                    position: absolute;
+                    inset: -2px;
+                    border-radius: inherit;
+                    padding: 2px;
+                    background: linear-gradient(to right, #6366f1, #a855f7);
+                    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                    -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+                }
+
+                .map-container {
+                    width: 100%;
+                    height: 80vh;
+                    max-height: 900px;
+                    border-radius: 1.5rem;
+                    overflow: hidden;
+                    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+                    background: #1e293b;
+                }
+
+                .flight-line {
+                    height: 2px;
+                    background: #e2e8f0;
+                    position: relative;
+                    flex-grow: 1;
+                    margin: 0 1rem;
+                }
+                .flight-dot {
+                    width: 8px;
+                    height: 8px;
+                    background: #cbd5e1;
+                    border-radius: 50%;
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                }
+
+                .fade-section {
+                    animation: fadeIn 0.4s ease-out forwards;
+                }
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+
+                .chat-bubble {
+                    max-width: 85%;
+                    padding: 1.25rem;
+                    border-radius: 1.5rem;
+                    margin-bottom: 1.25rem;
+                    font-size: 0.9375rem;
+                    line-height: 1.6;
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+                }
+                .chat-bubble.user {
+                    background: #4f46e5;
+                    color: white;
+                    align-self: flex-end;
+                    border-bottom-right-radius: 0.25rem;
+                }
+                .chat-bubble.ai {
+                    background: rgba(255, 255, 255, 0.7);
+                    color: #1e293b;
+                    align-self: flex-start;
+                    border-bottom-left-radius: 0.25rem;
+                    border: 1px solid rgba(255, 255, 255, 0.5);
+                }
+        
+                .typing-dot {
+                    width: 4px;
+                    height: 4px;
+                    background: #94a3b8;
+                    border-radius: 50%;
+                    display: inline-block;
+                    animation: bounce 1.4s infinite ease-in-out;
+                    margin: 0 2px;
+                }
+                @keyframes bounce {
+                    0%, 80%, 100% { transform: scale(0); }
+                    40% { transform: scale(1); }
+                }
+
+                @keyframes pulse-slow {
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0.4; }
+                }
+                .animate-pulse-slow {
+                    animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+                }
+
+                @keyframes refreshPulse {
+                    0% { opacity: 1; transform: scale(1); }
+                    50% { opacity: 0.85; transform: scale(0.995); }
+                    100% { opacity: 1; transform: scale(1); }
+                }
+                .refreshing-card {
+                    animation: refreshPulse 1.5s ease-in-out infinite;
+                    pointer-events: none;
+                }
+                .data-fade-in {
+                    animation: dataReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                }
+                @keyframes dataReveal {
+                    from { opacity: 0; transform: translateY(4px); filter: blur(4px); }
+                    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+                }
+                /* SEISMIC activity badge */
+                .hazard-badge-card {
+                    background-color: #ffffff !important; /* Solid vibrant light-lime accent */
+                    border: none !important;    
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                .hazard-badge-card:hover {
+                    transform: translateY(-4px);
+                    box-shadow: 0 20px 25px -5px rgba(54, 54, 52, 0.2);
+                }
+            </style>
+</head>
+<body class="pb-20">
+    <header class="pt-8 pb-4 px-6 max-w-6xl mx-auto text-center">
+        <h1 class="text-3xl md:text-5xl font-bold font-mono tracking-tighter mb-2 text-slate-900">Iceland 2026</h1>
+        <p class="text-slate-500 font-mono text-xs md:text-sm max-w-md mx-auto">
+            Down with mortgages! Inspired by Nam's OpenAI itinerary.
+        </p>
+    </header>
+
+    <!-- Refactored Slim Weather Dock -->
+    <div class="weather-stack-dock">
+        <!-- Minimal refresh indicator button on far left -->
+        <button onclick="fetchAllWeather()" class="p-2 text-indigo-00 hover:text-indigo-800 transition-colors flex items-center justify-center rounded-full bg-white border border-slate-100 shadow-sm ml-1" title="Get the latest forecast">
+
+          <svg class="w-4 h-4" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <path d="M939.456 256.224c-16.672-5.984-34.976 2.72-40.896 19.36l-24.768 69.344c-28.992-65.312-74.784-122.72-133.088-165.92-185.376-137.28-449.408-99.776-588.384 83.648-67.264 88.768-95.616 198.176-79.84 308.032 15.84 110.304 74.208 207.776 164.352 274.496 75.424 55.808 163.808 82.752 251.456 82.752 128.032 0 254.56-57.44 336.992-166.272 36.48-48.128 61.472-102.08 74.208-160.416 3.776-17.248-7.136-34.304-24.416-38.08-17.216-3.712-34.304 7.104-38.08 24.416-10.784 49.184-31.872 94.752-62.72 135.456-117.888 155.52-341.92 187.232-499.392 70.72-76.288-56.48-125.664-138.912-139.072-232.16-13.344-92.8 10.656-185.248 67.488-260.288 117.856-155.584 341.792-187.424 499.328-70.848 57.024 42.24 99.84 100.608 122.976 166.624l-109.984-42.944c-16.416-6.368-35.008 1.696-41.44 18.176-6.432 16.48 1.728 35.008 18.176 41.44l161.856 63.2c3.808 1.472 7.744 2.208 11.616 2.208 0.544 0 1.024-0.192 1.568-0.224 1.216 0.128 2.432 0.64 3.648 0.64 13.12 0 25.472-8.16 30.112-21.248l57.632-161.184c5.984-16.672-2.688-35.008-19.328-40.928z" fill="currentColor" />
+      </svg>
+        </button>
+
+        <div class="flex items-center gap-1 sm:gap-2 mr-1">
+            <!-- Reykjavik -->
+            <div class="weather-badge-card cursor-pointer" onclick="window.open('https://www.google.com/search?q=Reykjavik+iceland+weather', '_blank')">
+                <span class="text-[9px] sm:text-xs font-mono font-bold text-slate-500">✈️ KEF</span>
+                <span class="text-xs sm:text-sm font-bold font-mono text-slate-800" id="wt-temp-reyk">--°</span>
+                <span class="text-xs sm:text-sm" id="wt-icon-reyk">☁️</span>
+                <span class="text-[9px] font-mono text-slate-400 hidden md:inline-block border-l pl-1" id="wt-wind-reyk">--mph</span>
+            </div>
+
+            <!-- Vík -->
+            <div class="weather-badge-card cursor-pointer" onclick="window.open('https://www.google.com/search?q=Vik+iceland+weather', '_blank')">
+                <span class="text-[9px] sm:text-xs font-mono font-bold text-slate-500">📍 Vík</span>
+                <span class="text-xs sm:text-sm font-bold font-mono text-slate-800" id="wt-temp-vik">--°</span>
+                <span class="text-xs sm:text-sm" id="wt-icon-vik">☁️</span>
+                <span class="text-[9px] font-mono text-slate-400 hidden md:inline-block border-l pl-1" id="wt-wind-vik">--mph</span>
+            </div>
+
+            <!-- Borgarnes -->
+            <div class="weather-badge-card cursor-pointer" onclick="window.open('https://www.google.com/search?q=Borgarnes+iceland+weather+', '_blank')">
+                <span class="text-[9px] sm:text-xs font-mono font-bold text-slate-500">📍 Bgn</span>
+                <span class="text-xs sm:text-sm font-bold font-mono text-slate-800" id="wt-temp-borger">--°</span>
+                <span class="text-xs sm:text-sm" id="wt-icon-borger">☁️</span>
+                <span class="text-[9px] font-mono text-slate-400 hidden md:inline-block border-l pl-1" id="wt-wind-borger">--mph</span>
+            </div>
+        </div>
+    </div>
+
+    <nav class="sticky top-0 z-50 flex justify-center px-2 sm:px-4 mb-8 sm:mb-12">
+        <div class="glass p-1 sm:p-1.5 rounded-2xl grid grid-cols-3 items-center gap-0.5 sm:gap-1 shadow-xl border border-white/50 relative w-full max-w-2xl">
+            <button onclick="switchTab('map')" id="tab-map" class="w-full py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-sm md:text-sm font-mono font-bold transition-all glow-active text-center">
+                Map View
+            </button>
+            <button onclick="switchTab('tools')" id="tab-tools" class="w-full py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-sm md:text-sm font-mono text-slate-600 hover:text-slate-900 transition-all text-center">
+                Travel Tools
+            </button>
+            <button onclick="switchTab('accommodations')" id="tab-accommodations" class="w-full py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-sm md:text-sm font-mono text-slate-600 hover:text-slate-900 transition-all text-center">
+                Flights & Accommodations
+            </button>
+        </div>
+    </nav>
+
+    <!-- Floating AI Toggle Button -->
+    <button onclick="toggleAI()" 
+            class="fixed top-[80%] right-0 z-[100] w-12 h-14 bg-black text-white flex items-center justify-center shadow-2xl transition-all hover:pr-4 hover:w-16 active:scale-95 border-l-2 border-y-2 border-white rounded-l-2xl group overflow-hidden"
+            title="Open AI Guide">
+        <div class="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity bg-white"></div>
+        <span class="text-xl relative z-10">✦</span>
+    </button>
+
+    <!-- Floating AI Chat Drawer -->
+    <div id="ai-drawer" class="fixed bottom-0 sm:bottom-auto sm:top-[5%] right-0 sm:right-16 z-[100] w-full sm:w-[90vw] md:w-[400px] h-[80vh] sm:h-[600px] max-h-[90vh] md:max-h-[85vh] glass rounded-t-3xl sm:rounded-3xl shadow-2xl border border-white/40 flex flex-col hidden fade-section">
+        <div class="p-4 border-b border-white/20 flex justify-between items-center bg-black text-white rounded-t-3xl sm:rounded-t-3xl">
+            <div class="flex items-center gap-2">
+                <span class="text-lg">✨</span>
+                <span class="font-bold text-sm font-mono">Iceland AI Guide</span>
+            </div>
+            <button onclick="toggleAI()" class="text-slate-400 hover:text-white p-2">✕</button>
+        </div>
+
+        <!-- Chat Messages Area -->
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col gap-2 bg-white/10">
+            <div class="chat-bubble ai">
+                Hæ! I'm your personal AI Trip Assistant. I have all your trip dates and details, so ask me anything!
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-4 bg-white/30 border-t border-white/20 rounded-b-3xl">
+            <div class="flex gap-2">
+                <input type="text" id="ai-input" 
+                       class="flex-1 bg-white/80 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50" 
+                       placeholder="What does the Bible really teach?">
+                <button onclick="askAI()" id="send-btn" class="bg-purple-600 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-purple-700 transition-colors shadow-lg shadow-purple-500/20">
+                    Send
+                </button>
+            </div>
+    
+        </div>
+    </div>
+
+    <main class="max-w-6xl mx-auto px-4">
+        
+        <!-- MAP SECTION -->
+        <section id="section-map" class="fade-section">
+             <div class="max-w-3xl mx-auto mb-10 text-center">
+                <h2 class="text-2xl font-bold mb-3">Where to?</h2>
+                <p class="text-slate-500 text-sm"> Explore the interactive map below and expand the side bar to see our day-by-day route and saved locations.</p>
+            </div>
+            <div class="map-container">
+                <iframe 
+                    src="https://www.google.com/maps/d/u/0/embed?mid=1MjQz77mIdnEL1t84_ZnKr--_YdafDHc&ehbc=2E312F&noprof=1" 
+                    width="100%" 
+                    height="100%" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy">
+                </iframe>
+            </div>
+        </section>
+
+        <!-- TOOLS SECTION -->
+        <section id="section-tools" class="hidden fade-section">
+            <div class="max-w-3xl mx-auto mb-10 text-center">
+                <h2 class="text-2xl font-bold mb-3">Trip Resources</h2>
+                <p class="text-slate-500 text-sm">Conditions change quickly in Iceland. Here are some essential tools to track weather, road closures, and more.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <a href="https://en.vedur.is/" target="_blank" class="glass group p-8 rounded-3xl hover:bg-white transition-all hover:shadow-2xl">
+                    <div class="text-4xl mb-6 group-hover:scale-110 transition-transform">☁️</div>
+                    <h3 class="font-bold text-slate-900 text-lg">Vedur.is</h3>
+                    <p class="text-xs text-slate-500 mt-2 leading-relaxed">The only weather forecast you can trust in Iceland. Watch the wind speed!</p>
+                </a>
+                <a href="https://umferdin.is/en" target="_blank" class="glass group p-8 rounded-3xl hover:bg-white transition-all hover:shadow-2xl">
+                    <div class="text-4xl mb-6 group-hover:scale-110 transition-transform">🚗</div>
+                    <h3 class="font-bold text-slate-900 text-lg">Road.is</h3>
+                    <p class="text-xs text-slate-500 mt-2 leading-relaxed">Check real-time road closures and conditions before every drive.</p>
+                </a>
+               <a href="https://en.vedur.is/earthquakes-and-volcanism/earthquakes" target="_blank" class="glass hazard-badge-card group p-8 rounded-3xl block">
+                    <div class="text-4xl mb-6 group-hover:scale-110 transition-transform">🌋</div>
+                    <h3 class="font-bold text-slate-900 text-lg">Seismic Activity</h3>
+                    <p class="text-xs text-slate-800 font-medium mt-2 leading-relaxed opacity-90">
+                        Official government monitors for live volcanic conditions, sulfur gas drift, and real-time swarm earthquake maps.
+                    </p>
+                </a>
+                <a href="https://en.vedur.is/weather/forecasts/aurora/" target="_blank" class="glass group p-8 rounded-3xl hover:bg-white transition-all hover:shadow-2xl">
+                    <div class="text-4xl mb-6 group-hover:scale-110 transition-transform">✨</div>
+                    <h3 class="font-bold text-slate-900 text-lg">Aurora Forecast</h3>
+                    <p class="text-xs text-slate-500 mt-2 leading-relaxed">Tracks cloud cover and Kp-index to find the best spots for Northern Lights.</p>
+                </a>
+                <a href="https://share.icloud.com/photos/09cgoSN7JVLmH27uDBYKyBCxw/" target="_blank" class="glass group p-8 rounded-3xl hover:bg-white transition-all hover:shadow-2xl">
+                    <div class="text-4xl mb-6 group-hover:scale-110 transition-transform">📷</div>
+                    <h3 class="font-bold text-slate-900 text-lg">Iceland 2026</h3>
+                    <p class="text-xs text-slate-500 mt-2 leading-relaxed">This card links to a shared album for the Iceland 2026 trip.</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- FLIGHTS & ACCOMMODATIONS SECTION -->
+        <section id="section-accommodations" class="hidden fade-section">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-10 text-center">
+                    <h2 class="text-2xl font-bold mb-3">Stays & Accommodation</h2>
+                    <p class="text-slate-500 text-sm">Quick reference for the family's home bases.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+
+                    <!-- Airbnb 1: Grand Guesthouse Garðakot -->
+                    <div class="glass rounded-[1.5rem] overflow-hidden shadow-2xl border border-white/50 bg-white/40">
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-4">
+                                <span class="bg-black text-white text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">Sep 2 – Sep 4</span>
+                                <span class="text-[10px] font-mono text-slate-400">#22550458</span>
+                            </div>
+                            <h3 class="font-bold text-slate-900 text-lg">Grand Guesthouse Garðakot</h3>
+                            <p class="text-xs text-slate-500 mt-1">Entire cottage in Vik, Iceland</p>
+                            
+                            <div class="mt-4 flex items-center justify-between py-3 border-y border-slate-100 text-[10px] font-bold text-slate-600">
+                                <span>IN: 4PM</span>
+                                <span>OUT: 11AM</span>
+                            </div>
+
+                            <a href="https://www.airbnb.com/rooms/22550458?source_impression_id=p3_1778777841_P3uOmN1FSONua18B" target="_blank" class="mt-4 block w-full py-2 bg-rose-500 text-white text-center rounded-lg text-[11px] font-bold hover:bg-rose-600 transition-colors">
+                                Open in Airbnb
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Airbnb 2: North Iceland -->
+                    <div class="glass rounded-[1.5rem] overflow-hidden shadow-2xl border border-white/50 bg-white/40">
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-4">
+                                <span class="bg-black text-white text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">Sep 4 – Sep 8</span>
+                                <span class="text-[10px] font-mono text-slate-400">#2224180</span>
+                            </div>
+                            <h3 class="font-bold text-slate-900 text-lg">Luxury Cottage Borgarnes</h3>
+                            <p class="text-xs text-slate-500 mt-1">Entire cottage in Borgarnes, Iceland</p>
+                            
+                            <div class="mt-4 flex items-center justify-between py-3 border-y border-slate-100 text-[10px] font-bold text-slate-600">
+                                <span>IN: 3PM</span>
+                                <span>OUT: 10AM</span>
+                            </div>
+
+                            <a href="https://www.airbnb.com/rooms/2224180" target="_blank" class="mt-4 block w-full py-2 bg-rose-500 text-white text-center rounded-lg text-[11px] font-bold hover:bg-rose-600 transition-colors">
+                                Open in Airbnb
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-10 text-center">
+                    <h2 class="text-2xl font-bold mb-3">Flight Details</h2>
+                    <p class="text-slate-500 text-sm">Family reference for arrivals and departures. Confirmation codes are kept private for security.</p>
+                </div>
+
+                <!-- UA 138 Outbound -->
+                <div class="glass rounded-[2rem] mb-10 overflow-hidden shadow-2xl border border-white/50 bg-white/40" id="card-UA138">
+                    <!-- United Blue Header -->
+                    <div class="bg-[#0033A0] px-5 py-4 md:px-10 md:py-6">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2 sm:gap-3">
+                                <span id="ua138-status-badge" class="bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase">On Time</span>
+                                <span class="text-xs sm:text-sm font-mono font-bold text-white">United UA 138</span>
+                            </div>
+                            <div class="text-[9px] sm:text-[10px] font-medium text-white/70 text-right">Operated by United Airlines</div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 sm:p-8 md:p-10 pt-8 md:pt-10">
+                        <div class="flex items-center justify-between gap-2 sm:gap-4 mb-8">
+                            <div class="flex-1">
+                                <div class="text-3xl sm:text-5xl font-bold tracking-tighter text-slate-900 mb-1">EWR</div>
+                                <div class="text-[10px] sm:text-xs text-slate-500">Newark, NJ</div>
+                            </div>
+                            
+                            <div class="flex-[2] flex flex-col items-center">
+                                <div class="w-full h-[2px] bg-slate-200 relative flex items-center justify-center">
+                                    <div id="ua138-progress-bar" class="absolute w-full h-[2px] bg-emerald-500 left-0 origin-left transition-all duration-1000" style="width: 40%"></div>
+                                    <span class="relative z-10 bg-white px-1 sm:px-2 text-lg sm:text-xl translate-y-[-2px]">✈️</span>
+                                </div>
+                                <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 mt-2">5h 40m duration</span>
+                            </div>
+
+                            <div class="flex-1 text-right">
+                                <div class="text-3xl sm:text-5xl font-bold tracking-tighter text-slate-900 mb-1">REJ</div>
+                                <div class="text-[10px] sm:text-xs text-slate-500">Newark, IS</div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 border-t border-slate-100 pt-6 sm:pt-8">
+                            <div class="flex flex-col gap-4">
+                                <div>
+                                    <div class="text-[10px] uppercase font-bold text-slate-400 mb-1">Departs</div>
+                                    <div id="ua138-dep-time" class="text-xl sm:text-2xl font-bold text-emerald-600">9:20 PM</div>
+                                    <div class="text-[10px] text-slate-400">Tue, Sep 1</div>
+                                </div>
+                                <div class="flex gap-8">
+                                    <div>
+                                        <div class="text-[10px] uppercase font-bold text-slate-400 mb-1">Terminal</div>
+                                        <div id="ua138-dep-terminal" class="text-lg sm:text-xl font-bold text-slate-900">C</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-[10px] uppercase font-bold text-slate-400 mb-1">Gate</div>
+                                        <div id="ua138-dep-gate" class="text-lg sm:text-xl font-bold text-slate-900">C124</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-4 sm:text-right border-t sm:border-t-0 border-slate-100 pt-4 sm:pt-0">
+                                <div>
+                                    <div class="text-[10px] uppercase font-bold text-slate-400 mb-1">Estimated Arrival</div>
+                                    <div id="ua138-arr-time" class="text-xl sm:text-2xl font-bold text-slate-900">7:00 AM</div>
+                                    <div class="text-[10px] text-slate-400">Wed, Sep 2 (+1)</div>
+                                </div>
+                                <div class="flex gap-8 sm:justify-end">
+                                    <div>
+                                        <div class="text-[10px] uppercase font-bold text-slate-400 mb-1">Terminal</div>
+                                        <div id="ua138-arr-terminal" class="text-lg sm:text-xl font-bold text-slate-900">1</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-[10px] uppercase font-bold text-slate-400 mb-1">Gate</div>
+                                        <div id="ua138-arr-gate" class="text-lg sm:text-xl font-bold text-slate-900">—</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50/80 px-5 py-4 md:px-8 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0">
+                        <div id="ua138-update-time" class="text-[10px] text-slate-400 font-medium text-center sm:text-left">Source: UAL Live Grounding</div>
+                        <div class="flex gap-4">
+                            <a id="ua138-verify-link" href="https://www.google.com/search?q=UA138+flight+status" target="_blank" class="text-[10px] font-bold text-slate-400 hover:text-indigo-600 transition-colors">Verify on Google ↗</a>
+                            <button onclick="refreshFlightStatus('UA138')" id="btn-refresh-ua138" class="text-[10px] font-bold text-indigo-600 hover:underline flex items-center gap-1 disabled:opacity-50">
+                                Refresh Live Status ✦
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UA 139 Inbound -->
+                <div class="glass rounded-[2rem] mb-10 overflow-hidden shadow-2xl border border-white/50 bg-white/40" id="card-UA139">
+                    <!-- United Blue Header -->
+                    <div class="bg-[#0033A0] px-5 py-4 md:px-10 md:py-6">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2 sm:gap-3">
+                                <span id="ua139-status-badge" class="bg-slate-500 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase">Scheduled</span>
+                                <span class="text-xs sm:text-sm font-mono font-bold text-white">United UA 139</span>
+                            </div>
+                            <div class="text-[9px] sm:text-[10px] font-medium text-white/70 text-right">Operated by United Airlines</div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 sm:p-8 md:p-10 pt-8 md:pt-10">
+                        <div class="flex items-center justify-between gap-2 sm:gap-4 mb-8">
+                            <div class="flex-1">
+                                <div class="text-3xl sm:text-5xl font-bold tracking-tighter text-slate-900 mb-1">KEF</div>
+                                <div class="text-[10px] sm:text-xs text-slate-500">Reykjavík, IS</div>
+                            </div>
+                            
+                            <div class="flex-[2] flex flex-col items-center">
+                                <div class="w-full h-[2px] bg-slate-200 relative flex items-center justify-center">
+                                    <div id="ua139-progress-bar" class="absolute w-full h-[2px] bg-indigo-500 left-0 origin-left transition-all duration-1000" style="width: 0%"></div>
+                                    <span class="relative z-10 bg-white px-1 sm:px-2 text-lg sm:text-xl translate-y-[-2px]">✈️</span>
+                                </div>
+                                <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 mt-2">6h 15m duration</span>
+                            </div>
+
+                            <div class="flex-1 text-right">
+                                <div class="text-3xl sm:text-5xl font-bold tracking-tighter text-slate-900 mb-1">EWR</div>
+                                <div class="text-[10px] sm:text-xs text-slate-500">Newark, NJ</div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 border-t border-slate-100 pt-6 sm:pt-8">
+                            <div class="flex flex-col gap-4">
+                                <div>
+                                    <div class="text-[10px] uppercase font-bold text-slate-400 mb-1">Departs</div>
+                                    <div id="ua139-dep-time" class="text-xl sm:text-2xl font-bold text-slate-900">11:00 AM</div>
+                                    <div class="text-[10px] text-slate-400">Tue, Sep 8</div>
+                                </div>
+                                <div class="flex gap-8">
+                                    <div>
+                                        <div class="text-[10px] uppercase font-bold text-slate-400 mb-1">Terminal</div>
+                                        <div id="ua139-dep-terminal" class="text-lg sm:text-xl font-bold text-slate-900">1</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-[10px] uppercase font-bold text-slate-400 mb-1">Gate</div>
+                                        <div id="ua139-dep-gate" class="text-lg sm:text-xl font-bold text-slate-900">—</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-4 sm:text-right border-t sm:border-t-0 border-slate-100 pt-4 sm:pt-0">
+                                <div>
+                                    <div class="text-[10px] uppercase font-bold text-slate-400 mb-1">Arrival</div>
+                                    <div id="ua139-arr-time" class="text-xl sm:text-2xl font-bold text-slate-900">1:15 PM</div>
+                                    <div class="text-[10px] text-slate-400">Tue, Sep 8</div>
+                                </div>
+                                <div class="flex gap-8 sm:justify-end">
+                                    <div>
+                                        <div class="text-[10px] uppercase font-bold text-slate-400 mb-1">Terminal</div>
+                                        <div id="ua139-arr-terminal" class="text-lg sm:text-xl font-bold text-slate-900">C</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-[10px] uppercase font-bold text-slate-400 mb-1">Gate</div>
+                                        <div id="ua139-arr-gate" class="text-lg sm:text-xl font-bold text-slate-900">—</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50/80 px-5 py-4 md:px-8 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0">
+                        <div id="ua139-update-time" class="text-[10px] text-slate-400 font-medium text-center sm:text-left">Source: UAL Live Grounding</div>
+                        <div class="flex gap-4">
+                            <a id="ua139-verify-link" href="https://www.google.com/search?q=UA139+flight+status" target="_blank" class="text-[10px] font-bold text-slate-400 hover:text-indigo-600 transition-colors">Verify on Google ↗</a>
+                            <button onclick="refreshFlightStatus('UA139')" id="btn-refresh-ua139" class="text-[10px] font-bold text-indigo-600 hover:underline flex items-center gap-1 disabled:opacity-50">
+                                Refresh Live Status ✦
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const locations = {
+            reyk:   { name: 'Reykjavik', lat: 64.1466, lon: -21.9426 },
+            vik:    { name: 'Vik',       lat: 63.4194, lon: -19.0060 },
+            borger: { name: 'Borgarnes', lat: 64.5383, lon: -21.9206 }
+        };
+
+        async function fetchSingleLocationWeather(key, config) {
+            try {
+                const response = await fetch(`/api/weather?city=${config.name}`);
+                if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+
+                const data = await response.json();
+
+                const tempEl = document.getElementById(`wt-temp-${key}`);
+                const windEl = document.getElementById(`wt-wind-${key}`);
+                const iconEl = document.getElementById(`wt-icon-${key}`);
+
+                const tempVal = data.main ? data.main.temp : null;
+                const windVal = data.wind ? data.wind.speed : null;
+                const mainWeather = data.weather && data.weather[0] ? data.weather[0].main : '';
+
+                if (tempEl && tempVal !== null) {
+                    tempEl.innerText = `${Math.round(tempVal)}°`;
+                }
+
+                if (windEl && windVal !== null) {
+                    windEl.innerText = `${Math.round(windVal)}mph`;
+                }
+
+                if (iconEl) {
+                    if (mainWeather === 'Clear') iconEl.innerText = '☀️';
+                    else if (mainWeather === 'Clouds') iconEl.innerText = '☁️';
+                    else if (mainWeather === 'Rain' || mainWeather === 'Drizzle' || mainWeather === 'Thunderstorm') iconEl.innerText = '🌧️';
+                    else if (mainWeather === 'Snow') iconEl.innerText = '❄️';
+                    else iconEl.innerText = '🌫️';
+                }
+
+            } catch (error) {
+                console.error(`Failed loading secure weather for ${config.name}:`, error);
+                const tempEl = document.getElementById(`wt-temp-${key}`);
+                const windEl = document.getElementById(`wt-wind-${key}`);
+                if (tempEl) tempEl.innerText = 'Err';
+                if (windEl) windEl.innerText = 'Offline';
+            }
+        }
+
+        function fetchAllWeather() {
+            Object.keys(locations).forEach(key => {
+                fetchSingleLocationWeather(key, locations[key]);
+            });
+        }
+
+        function switchTab(tabName) {
+            const sections = ['map', 'tools', 'accommodations'];
+            sections.forEach(s => {
+                const el = document.getElementById('section-' + s);
+                if (el) el.classList.add('hidden');
+                const btn = document.getElementById('tab-' + s);
+                if (btn) {
+                    btn.classList.remove('glow-active', 'text-slate-900', 'font-bold');
+                    btn.classList.add('text-slate-600');
+                }
+            });
+
+            const activeSection = document.getElementById('section-' + tabName);
+            if (activeSection) activeSection.classList.remove('hidden');
+            
+            const activeBtn = document.getElementById('tab-' + tabName);
+            if (activeBtn) {
+                activeBtn.classList.add('glow-active', 'text-slate-900', 'font-bold');
+                activeBtn.classList.remove('text-slate-600');
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function refreshFlightStatus(flightNum) {
+            const id = flightNum.toLowerCase();
+            const btn = document.getElementById(`btn-refresh-${id}`);
+            const card = document.getElementById(`card-${flightNum}`);
+            if (!btn || !card) {
+                console.warn('refreshFlightStatus: missing button or card for', flightNum);
+                return;
+            }
+            const originalText = btn.innerHTML;
+            
+            card.classList.add('refreshing-card');
+            
+            btn.disabled = true;
+            btn.innerHTML = `<span class="animate-spin inline-block mr-1">✦</span> Scanning Skies...`;
+            
+            try {
+                const data = await getStructuredFlightData(flightNum);
+                
+                updateFlightUI(flightNum, data);
+                
+                const updateTargets = [
+                    `${id}-status-badge`, `${id}-dep-time`, `${id}-arr-time`, 
+                    `${id}-dep-gate`, `${id}-arr-gate`, `${id}-progress-bar`
+                ];
+                
+                updateTargets.forEach((targetId, index) => {
+                    const el = document.getElementById(targetId);
+                    if (el) {
+                        el.classList.remove('data-fade-in');
+                        void el.offsetWidth; 
+                        el.style.animationDelay = `${index * 50}ms`;
+                        el.classList.add('data-fade-in');
+                    }
+                });
+
+                const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                document.getElementById(`${id}-update-time`).innerText = `Last updated: Today at ${now} (via Google Search)`;
+            } catch (error) {
+                console.error("Failed to refresh flight:", error);
+                btn.innerHTML = `⚠️ Sync Error`;
+                setTimeout(() => { btn.innerHTML = originalText; }, 3000);
+            } finally {
+                card.classList.remove('refreshing-card');
+                btn.disabled = false;
+                if (!btn.innerHTML.includes('Error')) btn.innerHTML = originalText;
+            }
+        }
+
+        async function getStructuredFlightData(flightNum) {
+            const apiUrl = `/api/flight?flightNum=${flightNum}`;
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error("Flight server error");
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error("Client Flight Fetch Error:", error);
+                return {
+                    statusText: "Live Data Offline",
+                    statusColor: "slate",
+                    depTime: "Check App",
+                    arrTime: "Check App",
+                    depGate: "—",
+                    arrGate: "—",
+                    progress: 0
+                };
+            }
+        }
+
+        function updateFlightUI(flightNum, data) {
+            const id = flightNum.toLowerCase();
+            const badge = document.getElementById(`${id}-status-badge`);
+            if (badge) badge.innerText = data.statusText;
+            
+            let bgColor = "bg-slate-500";
+            if (data.statusColor === "emerald") bgColor = "bg-emerald-500";
+            if (data.statusColor === "amber") bgColor = "bg-amber-500";
+            if (data.statusColor === "rose") bgColor = "bg-rose-500";
+            
+            if (badge) badge.className = `text-[10px] font-bold px-2 py-1 rounded-md uppercase text-white ${bgColor}`;
+            
+            const depTimeEl = document.getElementById(`${id}-dep-time`);
+            const arrTimeEl = document.getElementById(`${id}-arr-time`);
+            if (depTimeEl) depTimeEl.innerText = data.depTime;
+            if (arrTimeEl) arrTimeEl.innerText = data.arrTime;
+
+            if (depTimeEl) depTimeEl.className = `text-xl sm:text-2xl font-bold text-${data.statusColor}-600`;
+            if (arrTimeEl) arrTimeEl.className = `text-xl sm:text-2xl font-bold text-${data.statusColor}-600`;
+
+            const depGateEl = document.getElementById(`${id}-dep-gate`);
+            const arrGateEl = document.getElementById(`${id}-arr-gate`);
+            if (depGateEl) depGateEl.innerText = data.depGate || "—";
+            if (arrGateEl) arrGateEl.innerText = data.arrGate || "—";
+
+            const progressEl = document.getElementById(`${id}-progress-bar`);
+            if (progressEl) progressEl.style.width = `${data.progress}%`;
+        }
+
+        function toggleAI() {
+            const drawer = document.getElementById('ai-drawer');
+            drawer.classList.toggle('hidden');
+            if (!drawer.classList.contains('hidden')) {
+                document.getElementById('ai-input').focus();
+            }
+        }
+
+        async function askAI() {
+            const input = document.getElementById('ai-input');
+            const query = input.value.trim();
+            if (!query) return;
+
+            addMessage(query, 'user');
+            input.value = '';
+            
+            const loadingId = addLoadingIndicator();
+
+            try {
+                const response = await callGemini(query);
+                removeLoadingIndicator(loadingId);
+                addMessage(response.text, 'ai', response.sources);
+            } catch (error) {
+                removeLoadingIndicator(loadingId);
+                addMessage("Sorry, I'm having trouble connecting to the glacier network. Try again in a moment!", 'ai');
+            }
+        }
+
+        function quickAsk(text) {
+            document.getElementById('ai-input').value = text;
+            askAI();
+        }
+
+        async function callGemini(userQuery) {
+            const apiUrl = '/api/chat'; 
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userQuery })
+                });
+                if (!response.ok) throw new Error("Server error");
+                const result = await response.json();
+                return { text: result.text, sources: [] };
+            } catch (e) {
+                throw e;
+            }
+        }
+
+        function addMessage(text, role, sources = []) {
+            const container = document.getElementById('chat-messages') || document.body;
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble ${role}`;
+            
+            let formattedText = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>')
+                .replace(/^\* (.*)/gm, '<div class="flex gap-2 mb-1"><span>•</span><span>$1</span></div>')
+                .replace(/\n\n/g, '<div class="h-3"></div>')
+                .replace(/\n/g, '<br>');
+
+            bubble.innerHTML = formattedText;
+
+            if (sources.length > 0) {
+                const sourceContainer = document.createElement('div');
+                sourceContainer.className = 'mt-3 pt-2 border-t border-slate-200 text-[10px] text-slate-400';
+                sourceContainer.innerHTML = '<strong>Sources:</strong> ' + sources.map(s => `<a href="${s.uri}" target="_blank" class="underline mr-2">${s.title}</a>`).join('');
+                bubble.appendChild(sourceContainer);
+            }
+
+            container.appendChild(bubble);
+            if (container.scrollTop !== undefined) container.scrollTop = container.scrollHeight;
+        }
+
+        function addLoadingIndicator() {
+            const container = document.getElementById('chat-messages');
+            const id = 'loading-' + Date.now();
+            const bubble = document.createElement('div');
+            bubble.id = id;
+            bubble.className = 'chat-bubble ai flex gap-1 items-center';
+            bubble.innerHTML = '<div class="typing-dot"></div><div class="typing-dot" style="animation-delay: 0.2s;"></div><div class="typing-dot" style="animation-delay: 0.4s;"></div>';
+            container.appendChild(bubble);
+            container.scrollTop = container.scrollHeight;
+            return id;
+        }
+
+        function removeLoadingIndicator(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        const aiInputEl = document.getElementById('ai-input');
+        if (aiInputEl) {
+            aiInputEl.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') askAI();
+            });
+        }
+
+        window.onload = function() {
+            switchTab('map');
+            fetchAllWeather();
+        };
+    </script>
+</body> 
+</html>
