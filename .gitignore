@@ -1,2 +1,5 @@
+# Ignore the environment variables containing sensitive API keys
 .env
-.env
+
+# Ignore the massive folder created by npm installs
+node_modules/
