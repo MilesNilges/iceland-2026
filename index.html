@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" type="image/jpg" href="favicon.jpg">
+    <link class="icon-file" rel="icon" type="image/jpg" href="favicon.jpg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iceland 2026 | Family Trip Planner</title>
@@ -25,7 +25,7 @@
                     border: 1px solid rgba(255, 255, 255, 0.3);
                 }
 
-                /* Ultra-thin pinned top weather ticker */
+                /* Ultra-thin pinned top weather ticker - Fluid Spacing */
                 .thin-weather-bar {
                     position: relative;
                     top: 0;
@@ -36,15 +36,34 @@
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    gap: 1.5rem;
-                    background: rgb(255, 255, 255);
+                    background: rgba(255, 255, 255, 0.75);
                     backdrop-filter: blur(20px);
                     -webkit-backdrop-filter: blur(20px);
-                    border-bottom: 1px solid rgba(254, 254, 255, 0.8);
-                    box-shadow: 0 1px 4px rgba(21, 22, 22, 0.02);
-                    padding: 0 1rem;
+                    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+                    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.02);
                     box-sizing: border-box;
-                    font-size: 0.95rem;
+                    white-space: nowrap;
+                    
+                    /* Fluid sizing */
+                    padding: 0 0.5rem;
+                    gap: 0.5rem;
+                    font-size: 0.65rem;
+                }
+
+                /* Responsive upgrades for larger viewports */
+                @media (min-width: 400px) {
+                    .thin-weather-bar {
+                        padding: 0 0.75rem;
+                        gap: 0.75rem;
+                        font-size: 0.7rem;
+                    }
+                }
+                @media (min-width: 640px) {
+                    .thin-weather-bar {
+                        padding: 0 1rem;
+                        gap: 1.5rem;
+                        font-size: 0.75rem;
+                    }
                 }
 
                 .weather-ticker-item {
@@ -185,10 +204,13 @@
 
         <!-- Reykjavik -->
         <a href="https://www.google.com/search?q=Reykjavik+iceland+weather" target="_blank" class="weather-ticker-item">
-            <span class="font-bold text-slate-500 font-mono">Reykjavík:</span>
+            <span class="font-bold text-slate-500 font-mono">
+                <span class="hidden md:inline">Reykjavík:</span>
+                <span class="md:hidden">REJK:</span>
+            </span>
             <span id="wt-temp-reyk" class="font-mono font-semibold text-slate-800">--°</span>
             <span id="wt-icon-reyk">☁️</span>
-            <span id="wt-wind-reyk" class="font-mono text-[10px]">--mph</span>
+            <span id="wt-wind-reyk" class="font-mono text-[10px] text-slate-400 hidden sm:inline border-l pl-1 border-slate-200">--mph</span>
         </a>
 
         <div class="ticker-divider"></div>
@@ -198,17 +220,20 @@
             <span class="font-bold text-slate-500 font-mono">Vík:</span>
             <span id="wt-temp-vik" class="font-mono font-semibold text-slate-800">--°</span>
             <span id="wt-icon-vik">☁️</span>
-            <span id="wt-wind-vik" class="font-mono text-[10px]">--mph</span>
+            <span id="wt-wind-vik" class="font-mono text-[10px] text-slate-400 hidden sm:inline border-l pl-1 border-slate-200">--mph</span>
         </a>
 
         <div class="ticker-divider"></div>
 
         <!-- Borgarnes -->
         <a href="https://www.google.com/search?q=Borgarnes+iceland+weather" target="_blank" class="weather-ticker-item">
-            <span class="font-bold text-slate-500 font-mono">Borgarnes:</span>
+            <span class="font-bold text-slate-500 font-mono">
+                <span class="hidden md:inline">Borgarnes:</span>
+                <span class="md:hidden">Borg:</span>
+            </span>
             <span id="wt-temp-borger" class="font-mono font-semibold text-slate-800">--°</span>
             <span id="wt-icon-borger">☁️</span>
-            <span id="wt-wind-borger" class="font-mono text-[10px]">--mph</span>
+            <span id="wt-wind-borger" class="font-mono text-[10px] text-slate-400 hidden sm:inline border-l pl-1 border-slate-200">--mph</span>
         </a>
     </div>
 
@@ -458,7 +483,7 @@
                         </div>
                     </div>
                     <div class="bg-slate-50/80 px-5 py-4 md:px-8 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0">
-                        <div id="ua138-update-time" class="text-[10px] text-slate-400 font-medium text-center sm:text-left">Source: UAL Live Grounding</div>
+                        <div id="ua138-update-time" class="text-[10px] text-slate-400 font-medium text-center m-0 sm:text-left">Source: UAL Live Grounding</div>
                         <div class="flex gap-4">
                             <a id="ua138-verify-link" href="https://www.google.com/search?q=UA138+flight+status" target="_blank" class="text-[10px] font-bold text-slate-400 hover:text-indigo-600 transition-colors">Verify on Google ↗</a>
                             <button onclick="refreshFlightStatus('UA138')" id="btn-refresh-ua138" class="text-[10px] font-bold text-indigo-600 hover:underline flex items-center gap-1 disabled:opacity-50">
