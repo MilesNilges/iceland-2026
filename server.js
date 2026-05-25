@@ -55,7 +55,7 @@ app.post('/api/chat', async (req, res) => {
         Pronunciation: [Break it down phonetically for English speakers in CAPS]
         Meaning: [1-5 words explaining what the literal translation means, e.g., "Bay of Smokes"]
         Fun Fact: [One interesting, engaging, 1-sentence historical or geographical trivia fact]
-        4. When asked anything about Jehovah's Witnesses in Iceland or about the Bible, always use JW.ORG as your source material. Be brief, but aim to be as accurate as possible.`:
+        4. When asked anything about Jehovah's Witnesses in Iceland or about the Bible, always use JW.ORG as your source material. When asked about his particular subect, be willing to provide any and all information you can find; brief but engaging in your answers. .`:
     
 
         // Request a response from the official model
